@@ -1,28 +1,127 @@
-<!--
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  const colors = require('tailwindcss/colors')
-  
-  module.exports = {
-    // ...
-    theme: {
-      extend: {
-        colors: {
-          cyan: colors.cyan,
-        }
-      }
-    },
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ]
+<script>
+import Books from './components/Books.vue'
+import RouteMobile from './components/route-mobile.vue'
+import RouteDesktop from './components/route-desktop.vue'
+
+import { ref, reactive, watch, getCurrentInstance, computed } from 'vue'
+import {
+  Dialog,
+  DialogOverlay,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  TransitionChild,
+  TransitionRoot,
+} from '@headlessui/vue'
+import {
+  BellIcon,
+  ClockIcon,
+  CogIcon,
+  CreditCardIcon,
+  HomeIcon,
+  MenuAlt1Icon,
+  QuestionMarkCircleIcon,
+  ScaleIcon,
+  ShieldCheckIcon,
+  XIcon,
+} from '@heroicons/vue/outline'
+import {
+  CashIcon,
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  OfficeBuildingIcon,
+  SearchIcon,
+} from '@heroicons/vue/solid'
+
+const secondaryNavigation = [
+  { name: 'Settings', href: '#', icon: CogIcon },
+  { name: 'Help', href: '#', icon: QuestionMarkCircleIcon },
+  { name: 'Privacy', href: '#', icon: ShieldCheckIcon },
+]
+const cards = [
+  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
+  // More items...
+]
+const transactions = [
+  {
+    id: 1,
+    name: 'Payment to Molly Sanders',
+    href: '#',
+    amount: '$20,000',
+    currency: 'USD',
+    status: 'success',
+    date: 'July 11, 2020',
+    datetime: '2020-07-11',
+  },
+  // More transactions...
+]
+const statusStyles = {
+  success: 'bg-green-100 text-green-800',
+  processing: 'bg-yellow-100 text-yellow-800',
+  failed: 'bg-gray-100 text-gray-800',
+}
+
+const navigationParams = reactive([
+    { name: 'Home', to: { name: 'dashboard' }, icon: HomeIcon, current: false },
+    { name: 'Livros', to: { name: 'books' }, icon: ClockIcon, current: false },
+    { name: 'Autores', to: { name: 'authors' }, icon: ScaleIcon, current: false },
+    { name: 'Livraria', to: { name: 'libraries' }, icon: CreditCardIcon, current: false }
+  ])
+
+export default {
+  components: {
+    RouteDesktop,
+    RouteMobile,
+    Books,
+    Dialog,
+    DialogOverlay,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    TransitionChild,
+    TransitionRoot,
+    BellIcon,
+    CashIcon,
+    CheckCircleIcon,
+    ChevronDownIcon,
+    ChevronRightIcon,
+    MenuAlt1Icon,
+    OfficeBuildingIcon,
+    SearchIcon,
+    XIcon,
+  },
+  setup() {
+    const sidebarOpen = ref(false)
+    const app = getCurrentInstance()
+
+    const currentRouteName = ref('')
+
+    const navigation = computed(() => {
+     return navigationParams.map(function(item) {
+       item.current = item.to.name === currentRouteName.value
+
+       return item
+     })
+    })
+
+    watch(() => app.appContext.config.globalProperties.$route.name, (name) => currentRouteName.value = name)
+
+    return {
+      currentRouteName,
+      navigation,
+      secondaryNavigation,
+      cards,
+      transactions,
+      statusStyles,
+      sidebarOpen,
+    }
   }
-  ```
--->
+}
+</script>
+
 <template>
   <div class="h-screen flex overflow-hidden bg-gray-100">
     <TransitionRoot as="template" :show="sidebarOpen">
@@ -43,23 +142,8 @@
             <div class="flex-shrink-0 flex items-center px-4">
               <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/easywire-logo-cyan-300-mark-white-text.svg" alt="Easywire logo" />
             </div>
-            <nav class="mt-5 flex-shrink-0 h-full divide-y divide-cyan-800 overflow-y-auto" aria-label="Sidebar">
-              <div class="px-2 space-y-1">
-                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-cyan-800 text-white' : 'text-cyan-100 hover:text-white hover:bg-cyan-600', 'group flex items-center px-2 py-2 text-base font-medium rounded-md']" :aria-current="item.current ? 'page' : undefined">
-                  <component :is="item.icon" class="mr-4 flex-shrink-0 h-6 w-6 text-cyan-200" aria-hidden="true" />
-                  {{ item.name }}
-                </a>
-              </div>
-              <div class="mt-6 pt-6" v-if="false">
-                <div class="px-2 space-y-1">
-                  <a v-for="item in secondaryNavigation" :key="item.name" :href="item.href" class="group flex items-center px-2 py-2 text-base font-medium rounded-md text-cyan-100 hover:text-white hover:bg-cyan-600">
-                    <component :is="item.icon" class="mr-4 h-6 w-6 text-cyan-200" aria-hidden="true" />
-                    {{ item.name }}
-                  </a>
-                </div>
-              </div>
-            </nav>
-          </div>
+            <route-mobile v-bind:routes="navigation" />
+           </div>
         </TransitionChild>
         <div class="flex-shrink-0 w-14" aria-hidden="true">
           <!-- Dummy element to force sidebar to shrink to fit close icon -->
@@ -75,22 +159,7 @@
           <div class="flex items-center flex-shrink-0 px-4">
             <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/easywire-logo-cyan-300-mark-white-text.svg" alt="Easywire logo" />
           </div>
-          <nav class="mt-5 flex-1 flex flex-col divide-y divide-cyan-800 overflow-y-auto" aria-label="Sidebar">
-            <div class="px-2 space-y-1">
-              <router-link v-for="item in navigation" :key="item.name" :to="item.to" :class="[item.current ? 'bg-cyan-800 text-white' : 'text-cyan-100 hover:text-white hover:bg-cyan-600', 'group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md']" :aria-current="item.current ? 'page' : undefined">
-                <component :is="item.icon" class="mr-4 flex-shrink-0 h-6 w-6 text-cyan-200" aria-hidden="true" />
-                {{ item.name }}
-              </router-link>
-            </div>
-            <div class="mt-6 pt-6">
-              <div class="px-2 space-y-1">
-                <a v-for="item in secondaryNavigation" :key="item.name" :href="item.href" class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-cyan-100 hover:text-white hover:bg-cyan-600">
-                  <component :is="item.icon" class="mr-4 h-6 w-6 text-cyan-200" aria-hidden="true" />
-                  {{ item.name }}
-                </a>
-              </div>
-            </div>
-          </nav>
+          <route-desktop v-bind:routes="navigation" />
         </div>
       </div>
     </div>
@@ -194,107 +263,3 @@
   </div>
 </template>
 
-<script>
-import Books from './components/Books.vue'
-
-import { ref } from 'vue'
-import {
-  Dialog,
-  DialogOverlay,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-  TransitionRoot,
-} from '@headlessui/vue'
-import {
-  BellIcon,
-  ClockIcon,
-  CogIcon,
-  CreditCardIcon,
-  HomeIcon,
-  MenuAlt1Icon,
-  QuestionMarkCircleIcon,
-  ScaleIcon,
-  ShieldCheckIcon,
-  XIcon,
-} from '@heroicons/vue/outline'
-import {
-  CashIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  OfficeBuildingIcon,
-  SearchIcon,
-} from '@heroicons/vue/solid'
-
-const navigation = [
-  { name: 'Home', to: { name: 'dashboard' }, icon: HomeIcon, current: true },
-  { name: 'Livros', to: { name: 'books' }, icon: ClockIcon, current: false },
-  { name: 'Autores', to: '/authors', icon: ScaleIcon, current: false },
-  { name: 'Livraria', to: '/libraries', icon: CreditCardIcon, current: false }
-]
-const secondaryNavigation = [
-  { name: 'Settings', href: '#', icon: CogIcon },
-  { name: 'Help', href: '#', icon: QuestionMarkCircleIcon },
-  { name: 'Privacy', href: '#', icon: ShieldCheckIcon },
-]
-const cards = [
-  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
-  // More items...
-]
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment to Molly Sanders',
-    href: '#',
-    amount: '$20,000',
-    currency: 'USD',
-    status: 'success',
-    date: 'July 11, 2020',
-    datetime: '2020-07-11',
-  },
-  // More transactions...
-]
-const statusStyles = {
-  success: 'bg-green-100 text-green-800',
-  processing: 'bg-yellow-100 text-yellow-800',
-  failed: 'bg-gray-100 text-gray-800',
-}
-
-export default {
-  components: {
-    Books,
-    Dialog,
-    DialogOverlay,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    TransitionChild,
-    TransitionRoot,
-    BellIcon,
-    CashIcon,
-    CheckCircleIcon,
-    ChevronDownIcon,
-    ChevronRightIcon,
-    MenuAlt1Icon,
-    OfficeBuildingIcon,
-    SearchIcon,
-    XIcon,
-  },
-  setup() {
-    const sidebarOpen = ref(false)
-
-    return {
-      navigation,
-      secondaryNavigation,
-      cards,
-      transactions,
-      statusStyles,
-      sidebarOpen,
-    }
-  },
-}
-</script>

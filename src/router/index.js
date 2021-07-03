@@ -1,5 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Books from '../components/Books.vue'
+import { routes as libraryRoutes } from '../Domains/Libraries/index'
 
 const Home = { template: '<div>Home</div>' }
 
@@ -7,7 +8,11 @@ const routes = [
     { path: '/', component: Home, name: 'dashboard' },
     {
         path: '/books', component: Books, name: 'books'
-    }
+    },
+    {
+        path: '/authors', component: Books, name: 'authors'
+    },
+    ...libraryRoutes
 ]
 
 // 3. Create the router instance and pass the `routes` option
