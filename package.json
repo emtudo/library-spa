@@ -10,6 +10,8 @@
     "@heroicons/vue": "^1.0.1",
     "@tailwindcss/forms": "^0.3.3",
     "axios": "^0.21.1",
+    "dayjs": "^1.10.6",
+    "lodash": "^4.17.21",
     "vue": "^3.0.5",
     "vue-router": "4"
   },

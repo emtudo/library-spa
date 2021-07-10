@@ -65,9 +65,9 @@ const statusStyles = {
 
 const navigationParams = reactive([
     { name: 'Home', to: { name: 'dashboard' }, icon: HomeIcon, current: false },
-    { name: 'Livros', to: { name: 'books' }, icon: ClockIcon, current: false },
-    { name: 'Autores', to: { name: 'authors' }, icon: ScaleIcon, current: false },
-    { name: 'Livraria', to: { name: 'libraries' }, icon: CreditCardIcon, current: false }
+    { name: 'Autores', to: { name: 'authors.index' }, icon: ScaleIcon, current: false },
+    { name: 'Biblioteca', to: { name: 'libraries.index' }, icon: CreditCardIcon, current: false },
+    { name: 'Livros', to: { name: 'books.index' }, icon: ClockIcon, current: false },
   ])
 
 export default {
@@ -246,7 +246,7 @@ export default {
                   </div>
                 </div>
               </div>
-              <div class="mt-6 flex space-x-3 md:mt-0 md:ml-4">
+              <div class="mt-6 flex space-x-3 md:mt-0 md:ml-4" v-if="false">
                 <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
                   Add money
                 </button>

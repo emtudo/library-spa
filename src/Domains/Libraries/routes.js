@@ -1,13 +1,11 @@
-import Form from './Views/Form.vue'
-import Index from './Views/Index.vue'
+import Form from './Views/LibraryForm.vue'
+import Index from './Views/LibraryIndex.vue'
 
-const routes = [
+export const routes = [
   {
-    path: '/libraries', component: Index, name: 'libraries'
+    path: '/libraries', component: Index, name: 'libraries.index'
   },
   {
     path: '/libraries/create', component: Form, name: 'libraries.create'
   }
 ]
-
-export default routes

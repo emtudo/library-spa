@@ -1,17 +1,14 @@
 import { createWebHistory, createRouter } from "vue-router";
-import Books from '../components/Books.vue'
+import { routes as authorRoutes } from '../Domains/Authors/index'
+import { routes as bookRoutes } from '../Domains/Books/index'
 import { routes as libraryRoutes } from '../Domains/Libraries/index'
 
 const Home = { template: '<div>Home</div>' }
 
 const routes = [
     { path: '/', component: Home, name: 'dashboard' },
-    {
-        path: '/books', component: Books, name: 'books'
-    },
-    {
-        path: '/authors', component: Books, name: 'authors'
-    },
+    ...authorRoutes,
+    ...bookRoutes,
     ...libraryRoutes
 ]
 
