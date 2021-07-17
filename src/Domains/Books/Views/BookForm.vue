@@ -1,10 +1,9 @@
 <script>
-import VSelect from '@/components/Select.vue'
-import MultiSelect from '@/components/MultiSelect.vue'
+import MultiSelect from '@/components/MultiSelect/index.vue'
+import { map, cloneDeep } from 'lodash'
 
 export default {
   components: {
-    VSelect,
     MultiSelect
   },
   data: () => ({
@@ -17,6 +16,13 @@ export default {
   }),
   methods: {
     doSave () {
+      const { book } = this
+      const { author_id: author, libraries } = book
+
+      const params = cloneDeep(book)
+      params.author_id = author.id
+      params.libraries = map(libraries, ({id}) => ({id}))
+      console.log({ params })
     }
   }
 }
@@ -55,8 +61,8 @@ export default {
         </div>
       </div>
     </div>
-    <multi-select />
-    <v-select />
+    <multi-select v-model="book.libraries" v-bind="{ endpoint: '/libraries', label: 'name' }" />
+    <multi-select v-model="book.author_id" v-bind="{ endpoint: '/authors', label: 'name', single: true }" />
     <div class="pt-5">
       <div class="flex justify-end">
         <button ype="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
